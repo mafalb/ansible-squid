@@ -8,7 +8,7 @@
 - name: squid.cfg
   copy:
     src: "{{ playbook_dir }}/files/{{ cfg }}"
-    dest: /etc/squid/squid.cfg
+    dest: /etc/squid/squid.conf
     backup: yes
   notify: reload squid
   when: cfg is defined
