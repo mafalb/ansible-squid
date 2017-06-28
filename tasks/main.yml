@@ -1,0 +1,37 @@
+---
+
+- name: squid
+  package:
+    name: squid
+    state: present
+
+- name: squid.cfg
+  copy:
+    src: "{{ playbook_dir }}/files/{{ cfg }}"
+    dest: /etc/squid/squid.cfg
+    backup: yes
+  notify: reload squid
+  when: cfg is defined
+
+# in a heartbeat cluster
+# heartbeat is starting
+# the service
+#
+- name: start squid
+  service:
+    name: "{{ squid_service }}"
+    state: started
+  when: squid_start_service
+
+# ansible bug #350
+# reload always starts service
+# https://github.com/ansible/ansible-modules-core/issues/350
+#
+# gather info about the pid file
+# and use it in reload handler
+#
+- name: check for pidfile
+  stat:
+    path: /var/run/squid.pid
+  register: squid_pidfile
+

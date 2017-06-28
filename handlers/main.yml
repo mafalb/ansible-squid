@@ -1,0 +1,16 @@
+---
+
+# ansible bug #350
+# reload always starts service
+# https://github.com/ansible/ansible-modules-core/issues/350
+#
+# this is suboptimal with heartbeat where squid is
+# running only on _one_ system
+#
+# therefore a check for the squid pid file
+#
+- name: reload squid
+  service:
+    name: squid
+    state: reloaded
+  when: squid_pidfile.stat.exists
