@@ -1,27 +1,35 @@
 ---
 
-- name: squid
+- name: squid is installed
   package:
     name: squid
     state: present
 
-- name: squid.cfg
+- name: squid config is present
+  when: squid.external_config_file
   copy:
-    src: "{{ playbook_dir }}/files/{{ cfg }}"
+    src: "{{ playbook_dir }}/{{ squid.external_config_file }}"
     dest: /etc/squid/squid.conf
     backup: yes
   notify: reload squid
-  when: cfg is defined
+
+- name: squid config is present
+  when: not squid.external_config_file
+  template:
+    src: squid.conf
+    dest: /etc/squid/squid.conf
+    backup: yes
+  notify: reload squid
 
 # in a heartbeat cluster
 # heartbeat is starting
 # the service
 #
-- name: start squid
+- name: squid is running
+  when: squid.manage_service
   service:
-    name: "{{ squid_service }}"
+    name: squid
     state: started
-  when: squid_start_service
 
 # ansible bug #350
 # reload always starts service
@@ -33,5 +41,5 @@
 - name: check for pidfile
   stat:
     path: /var/run/squid.pid
-  register: squid_pidfile
-
+  register: _squid_pidfile
+  check_mode: false
