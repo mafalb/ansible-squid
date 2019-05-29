@@ -1,6 +1,6 @@
 ---
 
-- name: squid is installed
+- name: squid is present
   package:
     name: squid
     state: present

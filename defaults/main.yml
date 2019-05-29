@@ -1,5 +1,7 @@
 ---
 
 squid:
-  external_config_file: false
-  manage_service: true
+  external_config_file: "{{ squid_config_file|default(False) }}"
+  manage_service: "{{ squid_manage_service|default(True) }}"
+
+...
